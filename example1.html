@@ -1,0 +1,71 @@
+<html>
+
+<head>
+    <title>JavaScript MQTT WebSocket Example</title>
+    <!--https://www.cdnpkg.com/paho-mqtt?id=59394-->
+    <!--https://www.eclipse.org/paho/index.php?page=clients/js/index.php-->
+    <!--https://www.eclipse.org/paho/files/jsdoc/Paho.MQTT.Client.html-->
+    <!--https://www.eclipse.org/paho/files/jsdoc/Paho.MQTT.Message.html-->
+    <!--https://www.eclipse.org/paho/files/jsdoc/Paho.MQTT.html-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript">
+    </script>
+    <script type="text/javascript" language="javascript">
+        let mqttTopic = "bns";
+        let hostname = "172.28.0.41";
+        let port = 9001;
+        let keepAliveInterval = 60;
+        let clientId = "SomeID";
+        let useSSL = false;
+        let cleanSession = true;
+        let userName = "SomeUser";
+        let password = "someSecret";
+
+        function MQTTconnect() {
+            client = new Paho.MQTT.Client(hostname, Number(port), clientId);
+            let connectOptions = {
+                timeout: 10,
+                useSSL: useSSL,
+                cleanSession: cleanSession,
+                userName: userName,
+                password: password,
+                keepAliveInterval: keepAliveInterval,
+                onSuccess: onConnect,
+                onFailure: failedConnect
+            }
+            client.onMessageArrived = onMessageArrived;
+            client.onConnectionLost = onConnectionLost;
+            client.connect(connectOptions);
+        };
+
+        function onConnect() {
+            console.log("onConnect: Connected to MQTT host: " + hostname + " port: " + port);
+            client.subscribe(mqttTopic);
+            message = new Paho.MQTT.Message("Better know a region!");
+            message.destinationName = mqttTopic;
+            client.send(message);
+        };
+
+        function failedConnect() {
+            console.log("failedConnect: MQTT connection failed - host: " + host + " port: " + port);
+        };
+
+        function onConnectionLost(responseObject) {
+            if (responseObject.errorCode !== 0)
+                console.log("onConnectionLost: " + responseObject.errorMessage);
+        };
+
+        function onMessageArrived(message) {
+            console.log("onMessageArrived: " + message.payloadString);
+            // client.disconnect();
+        };
+    </script>
+</head>
+
+<body>
+    <h1>Body</h1>
+    <script>
+        MQTTconnect();
+    </script>
+</body>
+
+</html>
