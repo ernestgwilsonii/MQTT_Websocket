@@ -56,16 +56,22 @@
 
         function onMessageArrived(message) {
             console.log("onMessageArrived: " + message.payloadString);
+            let thisMessage = message.payloadString;
+            let messages = document.getElementById("messages");
+            let entry = document.createElement("li");
+            entry.insertAdjacentHTML("beforeend", `${thisMessage} <BR>`);
+            messages.appendChild(entry);
             // client.disconnect();
         };
     </script>
 </head>
 
 <body>
-    <h1>Body</h1>
+    <h1>MQTT over WebSockets</h1>
     <script>
         MQTTconnect();
     </script>
+    Messages:<p id="messages"></p>
 </body>
 
 </html>
